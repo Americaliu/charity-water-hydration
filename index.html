@@ -1,0 +1,198 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Charity Water: Hydration</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+  <style>
+    /* Prototype additions; existing styles.css can stay unchanged. */
+    #game-map { touch-action: none; }
+
+    .water-source {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border: 2px solid #268bad;
+      border-radius: 50%;
+      background: #bde9f4;
+      font-size: 20px;
+      user-select: none;
+    }
+
+    .water-source.risky {
+      background: #dcc49e;
+      border-color: #906437;
+    }
+
+    .water-source.nearby {
+      outline: 4px solid #ffc629;
+    }
+
+    .water-source.used {
+      opacity: 0.3;
+      filter: grayscale(1);
+    }
+
+    #feedback {
+      min-height: 28px;
+      margin: 12px 0;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    #purify-progress {
+      display: none;
+      height: 12px;
+      overflow: hidden;
+      background: #c9d4d8;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+
+    #purify-fill {
+      width: 0%;
+      height: 100%;
+      background: #ffc629;
+      transition: width 1.5s linear;
+    }
+
+    .game-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    #end-screen {
+      display: none;
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      background: rgba(20, 42, 58, 0.94);
+      color: white;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 20px;
+    }
+
+    #end-screen.visible {
+      display: flex;
+    }
+
+    #end-screen h2 {
+      margin: 8px 0;
+    }
+
+    #end-screen p {
+      margin: 8px 0 20px;
+    }
+
+    .confetti {
+      position: absolute;
+      top: -15px;
+      width: 9px;
+      height: 14px;
+      animation: confetti-fall 2.5s ease-in forwards;
+      pointer-events: none;
+    }
+
+    @keyframes confetti-fall {
+      to {
+        transform: translateY(490px) rotate(650deg);
+        opacity: 0;
+      }
+    }
+
+    .touch-controls {
+      display: none;
+    }
+
+    @media (max-width: 700px) {
+      .touch-controls {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin: 12px 0;
+        flex-wrap: wrap;
+      }
+
+      .touch-controls button {
+        min-width: 48px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+
+    <header>
+      <h1>Charity Water: Hydration</h1>
+      <p>Explore. Discover. Purify.</p>
+    </header>
+
+    <section class="hud" aria-label="Game status">
+      <div>
+        Water Points: <span id="score">0</span> / 500
+      </div>
+      <div>
+        Time: <span id="timer">03:00</span>
+      </div>
+      <div>Level: 1</div>
+    </section>
+
+    <section id="game-map" aria-label="Game map">
+      <div id="base">BASE</div>
+      <div id="player" aria-label="Player"></div>
+
+      <div id="end-screen" role="status" aria-live="polite">
+        <h2 id="end-title"></h2>
+        <p id="end-detail"></p>
+        <button id="play-again">Play Again</button>
+      </div>
+    </section>
+
+    <p id="feedback" role="status" aria-live="polite">
+      Press Start Game to begin.
+    </p>
+
+    <div id="purify-progress" aria-label="Purification progress">
+      <div id="purify-fill"></div>
+    </div>
+
+    <section class="controls">
+      <p>
+        WASD: Move | E: Purify nearby pond |
+        Blue: Normal (+100) | Brown: Risky (+300 / -50)
+      </p>
+
+      <div class="game-buttons">
+        <button id="start">Start Game</button>
+        <button id="reset">Reset Game</button>
+      </div>
+
+      <div class="touch-controls" aria-label="Touch controls">
+        <button data-move="w" aria-label="Move up">↑</button>
+        <button data-move="a" aria-label="Move left">←</button>
+        <button data-move="s" aria-label="Move down">↓</button>
+        <button data-move="d" aria-label="Move right">→</button>
+        <button id="touch-purify">Purify (E)</button>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>
